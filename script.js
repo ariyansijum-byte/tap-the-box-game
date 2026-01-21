@@ -68,6 +68,16 @@ function endGame() {
 
 // Move box randomly
 function moveBox() {
+  const maxX = window.innerWidth - 100;
+  const maxY = window.innerHeight - 200;
+
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+
+  box.style.position = "absolute";
+  box.style.left = x + "px";
+  box.style.top = y + "px";
+}
   const x = Math.random() * 200 - 100;
   const y = Math.random() * 200 - 100;
   box.style.transform = `translate(${x}px, ${y}px)`;
