@@ -37,7 +37,22 @@ document.getElementById("start").addEventListener("click", () => {
     }
   }, 1000);
 });
+// Start Button
+document.getElementById("start").addEventListener("click", () => {
+  if (gameRunning) return;
 
+  gameRunning = true;
+  score = 0;
+  timeLeft = 30;
+
+  scoreEl.innerText = score;
+  timeEl.innerText = timeLeft;
+
+  box.style.display = "block";
+
+  startTimer();
+  moveBox();
+});
 // Box Click
 box.addEventListener("click", () => {
   if (!gameRunning) return;
