@@ -46,13 +46,8 @@ box.addEventListener("click", () => {
   scoreEl.innerText = score;
   localStorage.setItem("score", score);
 
-
-  gameOverSound.currentTime = 0;
-  gameOverSound.play();
-}
   moveBox();
 });
-
 // Restart
 document.getElementById("reset").addEventListener("click", () => {
   score = 0;
