@@ -8,8 +8,8 @@ let gameOverSound = new Audio("sound/gameover.wav");
 
 // 📱 iPhone / Mobile unlock (VERY IMPORTANT)
 document.addEventListener("click", () => {
-  gameOverSound.play;
-  gameOverSound.pause;
+  gameOverSound.play();
+  gameOverSound.pause;l();
 }, { once: true });
 const scoreEl = document.getElementById("score");
 const highScoreEl = document.getElementById("highScore");
