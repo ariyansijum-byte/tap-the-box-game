@@ -46,6 +46,10 @@ box.addEventListener("click", () => {
   scoreEl.innerText = score;
   localStorage.setItem("score", score);
 
+
+  gameOverSound.currentTime = 0;
+  gameOverSound.play();
+}
   moveBox();
 });
 
@@ -87,7 +91,11 @@ function moveBox() {
   box.style.left = x + "px";
   box.style.top = y + "px";
 }
-  const x = Math.random() * 200 - 100;
-  const y = Math.random() * 200 - 100;
-  box.style.transform = `translate(${x}px, ${y}px)`;
+function endGame() {
+  clearInterval(timer);
+  gameRunning = false;
+  box.style.display = "none";
+
+  gameOverSound.currentTime = 0;
+  gameOverSound.play();
 }
