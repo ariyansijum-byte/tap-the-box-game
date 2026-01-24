@@ -15,7 +15,30 @@ const scoreEl = document.getElementById("score");
 const highScoreEl = document.getElementById("highScore");
 const timeEl = document.getElementById("time");
 const box = document.getElementById("box");
+// Start Game
+document.getElementById("start").addEventListener("click", () => {
+  if (gameRunning) return;
 
+  gameRunning = true;
+  score = 0;
+  timeLeft = 30;
+
+  scoreEl.innerText = score;
+  timeEl.innerText = timeLeft;
+
+  box.style.display = "block";
+  moveBox();
+
+  clearInterval(timer);
+  timer = setInterval(() => {
+    timeLeft--;
+    timeEl.innerText = timeLeft;
+
+    if (timeLeft === 0) {
+      endGame();
+    }
+  }, 1000);
+});
 scoreEl.innerText = score;
 highScoreEl.innerText = highScore;
 
