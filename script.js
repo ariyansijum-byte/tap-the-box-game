@@ -3,7 +3,14 @@ let highScore = parseInt(localStorage.getItem("highScore")) || 0;
 let timeLeft = 30;
 let timer;
 let gameRunning = false;
+// 🔊 Game Over Sound
+let gameOverSound = new Audio("sound/gameover.wav");
 
+// 📱 iPhone / Mobile unlock (VERY IMPORTANT)
+document.addEventListener("click", () => {
+  gameOverSound.play();
+  gameOverSound.pause();
+}, { once: true });
 const scoreEl = document.getElementById("score");
 const highScoreEl = document.getElementById("highScore");
 const timeEl = document.getElementById("time");
@@ -56,14 +63,16 @@ function endGame() {
   clearInterval(timer);
   gameRunning = false;
   box.style.display = "none";
-
+// 🔊 Game Over Sound
+gameOverSound.currentTime = 0;
+gameOverSound.play();
   if (score > highScore) {
     highScore = score;
     localStorage.setItem("highScore", highScore);
     highScoreEl.innerText = highScore;
-  }
+  
 
-  alert("Game Over!");
+  
 }
 
 // Move box randomly
