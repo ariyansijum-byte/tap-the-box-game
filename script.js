@@ -43,13 +43,16 @@ box.style.display = "none";
 // =======================
 function moveBox() {
   if (!gameRunning) return;
-
   const gameArea = document.getElementById("gameArea");
-  const areaWidth = gameArea.clientWidth - box.offsetWidth;
-  const areaHeight = gameArea.clientHeight - box.offsetHeight;
 
-  const x = Math.random() * areaWidth;
-  const y = Math.random() * areaHeight;
+  const areaWidth = gameArea.clientWidth;
+const areaHeight = gameArea.clientHeight;
+
+const boxWidth = box.offsetWidth;
+const boxHeight = box.offsetHeight;
+
+const x = Math.random() * (areaWidth - boxWidth);
+const y = Math.random() * (areaHeight - boxHeight);
 
   box.style.left = x + "px";
   box.style.top = y + "px";
