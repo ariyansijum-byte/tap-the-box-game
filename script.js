@@ -8,33 +8,27 @@ let timer;
 let gameRunning = false;
 
 // =======================
+// Elements
+// =======================
+const box = document.getElementById("box");
+const scoreEl = document.getElementById("score");
+const highScoreEl = document.getElementById("highScore");
+const timeEl = document.getElementById("time");
+const startBtn = document.getElementById("startBtn");
+
+// =======================
 // Sounds
 // =======================
 const clickSound = new Audio("sound/click.wav");
 const gameOverSound = new Audio("sound/gameover.wav");
 
 // =======================
-// iPhone / Mobile sound unlock (VERY IMPORTANT)
+// Mobile sound unlock (IMPORTANT)
 // =======================
-document.addEventListener(
-  "click",
-  () => {
-    clickSound.play();
-    clickSound.pause();
-    gameOverSound.play();
-    gameOverSound.pause();
-  },
-  { once: true }
-);
-
-// =======================
-// Elements
-// =======================
-const scoreEl = document.getElementById("score");
-const highScoreEl = document.getElementById("highScore");
-const timeEl = document.getElementById("time");
-const box = document.getElementById("box");
-const startBtn = document.getElementById("start");
+document.addEventListener("click", () => {
+  clickSound.play().then(() => clickSound.pause());
+  gameOverSound.play().then(() => gameOverSound.pause());
+}, { once: true });
 
 // =======================
 // Initial UI
@@ -42,9 +36,42 @@ const startBtn = document.getElementById("start");
 scoreEl.textContent = score;
 highScoreEl.textContent = highScore;
 timeEl.textContent = timeLeft;
+box.style.display = "none";
 
 // =======================
-// Start Game
+// Move Box Function
+// =======================
+function moveBox() {
+  if (!gameRunning) return;
+
+  const gameArea = document.getElementById("gameArea");
+  const areaWidth = gameArea.clientWidth - box.offsetWidth;
+  const areaHeight = gameArea.clientHeight - box.offsetHeight;
+
+  const x = Math.random() * areaWidth;
+  const y = Math.random() * areaHeight;
+
+  box.style.left = x + "px";
+  box.style.top = y + "px";
+}
+
+// =======================
+// Box Click
+// =======================
+box.addEventListener("click", () => {
+  if (!gameRunning) return;
+
+  score++;
+  scoreEl.textContent = score;
+
+  clickSound.currentTime = 0;
+  clickSound.play();
+
+  moveBox();
+});
+
+// =======================
+// Start Game Button
 // =======================
 startBtn.addEventListener("click", () => {
   if (gameRunning) return;
@@ -56,6 +83,9 @@ startBtn.addEventListener("click", () => {
   scoreEl.textContent = score;
   timeEl.textContent = timeLeft;
 
+  box.style.display = "block";
+  moveBox();
+
   timer = setInterval(() => {
     timeLeft--;
     timeEl.textContent = timeLeft;
@@ -63,6 +93,7 @@ startBtn.addEventListener("click", () => {
     if (timeLeft <= 0) {
       clearInterval(timer);
       gameRunning = false;
+      box.style.display = "none";
 
       if (score > highScore) {
         highScore = score;
@@ -76,33 +107,3 @@ startBtn.addEventListener("click", () => {
     }
   }, 1000);
 });
-
-// =======================
-// Box Click
-// =======================
-box.addEventListener("click", () => {
-  if (!gameRunning) return;
-
-  score++;
-  scoreEl.textContent = score;
-  localStorage.setItem("score", score);
-
-  clickSound.currentTime = 0;
-  clickSound.play();
-
-  moveBox();
-});
-
-// =======================
-// Move Box Randomly
-// =======================
-function moveBox() {
-  const maxX = window.innerWidth - box.offsetWidth;
-  const maxY = window.innerHeight - box.offsetHeight;
-
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
-
-  box.style.left = x + "px";
-  box.style.top = y + "px";
-}
