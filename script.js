@@ -1,134 +1,108 @@
+// =======================
+// Variables
+// =======================
 let score = parseInt(localStorage.getItem("score")) || 0;
 let highScore = parseInt(localStorage.getItem("highScore")) || 0;
 let timeLeft = 30;
 let timer;
 let gameRunning = false;
-// 🔊 Game Over Sound
-let gameOverSound = new Audio("sound/gameover.wav");
 
-// 📱 iPhone / Mobile unlock (VERY IMPORTANT)
-document.addEventListener("click", () => {
-  gameOverSound.play();
-  gameOverSound.pause();
-}, { once: true });
+// =======================
+// Sounds
+// =======================
+const clickSound = new Audio("sound/click.wav");
+const gameOverSound = new Audio("sound/gameover.wav");
+
+// =======================
+// iPhone / Mobile sound unlock (VERY IMPORTANT)
+// =======================
+document.addEventListener(
+  "click",
+  () => {
+    clickSound.play();
+    clickSound.pause();
+    gameOverSound.play();
+    gameOverSound.pause();
+  },
+  { once: true }
+);
+
+// =======================
+// Elements
+// =======================
 const scoreEl = document.getElementById("score");
 const highScoreEl = document.getElementById("highScore");
 const timeEl = document.getElementById("time");
 const box = document.getElementById("box");
+const startBtn = document.getElementById("start");
+
+// =======================
+// Initial UI
+// =======================
+scoreEl.textContent = score;
+highScoreEl.textContent = highScore;
+timeEl.textContent = timeLeft;
+
+// =======================
 // Start Game
-document.getElementById("start").addEventListener("click", () => {
+// =======================
+startBtn.addEventListener("click", () => {
   if (gameRunning) return;
 
   gameRunning = true;
   score = 0;
   timeLeft = 30;
 
-  scoreEl.innerText = score;
-  timeEl.innerText = timeLeft;
-
-  box.style.display = "block";
-  moveBox();
-
-  clearInterval(timer);
-  timer = setInterval(() => {
-    timeLeft--;
-    timeEl.innerText = timeLeft;
-
-    if (timeLeft === 0) {
-      endGame();
-    }
-  }, 1000);
-});
-scoreEl.innerText = score;
-highScoreEl.innerText = highScore;
-
-// Start Game
-document.getElementById("start").addEventListener("click", () => {
-  if (gameRunning) return;
-
-  gameRunning = true;
-  timeLeft = 30;
-  timeEl.innerText = timeLeft;
-  box.style.display = "block";
+  scoreEl.textContent = score;
+  timeEl.textContent = timeLeft;
 
   timer = setInterval(() => {
     timeLeft--;
-    timeEl.innerText = timeLeft;
+    timeEl.textContent = timeLeft;
 
-    if (timeLeft === 0) {
-      endGame();
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      gameRunning = false;
+
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("highScore", highScore);
+        highScoreEl.textContent = highScore;
+      }
+
+      gameOverSound.currentTime = 0;
+      gameOverSound.play();
+      alert("Game Over! Your score: " + score);
     }
   }, 1000);
 });
-// Start Button
-document.getElementById("start").addEventListener("click", () => {
-  if (gameRunning) return;
 
-  gameRunning = true;
-  score = 0;
-  timeLeft = 30;
-
-  scoreEl.innerText = score;
-  timeEl.innerText = timeLeft;
-
-  box.style.display = "block";
-
-  startTimer();
-  moveBox();
-});
+// =======================
 // Box Click
+// =======================
 box.addEventListener("click", () => {
   if (!gameRunning) return;
 
   score++;
-  scoreEl.innerText = score;
+  scoreEl.textContent = score;
   localStorage.setItem("score", score);
+
+  clickSound.currentTime = 0;
+  clickSound.play();
 
   moveBox();
 });
-// Restart
-document.getElementById("reset").addEventListener("click", () => {
-  score = 0;
-  timeLeft = 30;
-  scoreEl.innerText = score;
-  timeEl.innerText = timeLeft;
-  localStorage.setItem("score", score);
-});
 
-// End Game
-function endGame() {
-  clearInterval(timer);
-  gameRunning = false;
-  box.style.display = "none";
-// 🔊 Game Over Sound
-gameOverSound.currentTime = 0;
-gameOverSound.play();
-  if (score > highScore) {
-    highScore = score;
-    localStorage.setItem("highScore", highScore);
-    highScoreEl.innerText = highScore;
-  
-
-  
-}
-
-// Move box randomly
+// =======================
+// Move Box Randomly
+// =======================
 function moveBox() {
-  const maxX = window.innerWidth - 100;
-  const maxY = window.innerHeight - 200;
+  const maxX = window.innerWidth - box.offsetWidth;
+  const maxY = window.innerHeight - box.offsetHeight;
 
   const x = Math.random() * maxX;
   const y = Math.random() * maxY;
 
-  box.style.position = "absolute";
   box.style.left = x + "px";
   box.style.top = y + "px";
-}
-function endGame() {
-  clearInterval(timer);
-  gameRunning = false;
-  box.style.display = "none";
-
-  gameOverSound.currentTime = 0;
-  gameOverSound.play();
 }
