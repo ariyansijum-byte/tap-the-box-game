@@ -1,4 +1,6 @@
+// =======================
 // Elements
+// =======================
 const gameArea = document.getElementById("gameArea");
 const box = document.getElementById("box");
 const startBtn = document.getElementById("startBtn");
@@ -7,29 +9,42 @@ const scoreEl = document.getElementById("score");
 const timeEl = document.getElementById("time");
 const highScoreEl = document.getElementById("highScore");
 
+// =======================
 // Game variables
+// =======================
 let score = 0;
 let timeLeft = 30;
 let gameRunning = false;
 let timer = null;
 
+// =======================
 // High score (localStorage)
+// =======================
 let highScore = localStorage.getItem("highScore") || 0;
 highScoreEl.textContent = highScore;
 
+// =======================
 // Move box randomly
+// =======================
 function moveBox() {
-  const areaWidth = gameArea.clientWidth - box.clientWidth;
-  const areaHeight = gameArea.clientHeight - box.clientHeight;
+  if (!gameRunning) return;
 
-  const x = Math.random() * areaWidth;
-  const y = Math.random() * areaHeight;
+  const areaWidth = gameArea.clientWidth;
+  const areaHeight = gameArea.clientHeight;
+
+  const boxWidth = box.offsetWidth;
+  const boxHeight = box.offsetHeight;
+
+  const x = Math.random() * (areaWidth - boxWidth);
+  const y = Math.random() * (areaHeight - boxHeight);
 
   box.style.left = x + "px";
   box.style.top = y + "px";
 }
 
+// =======================
 // Box click
+// =======================
 box.addEventListener("click", () => {
   if (!gameRunning) return;
 
@@ -39,7 +54,9 @@ box.addEventListener("click", () => {
   moveBox();
 });
 
+// =======================
 // Start button
+// =======================
 startBtn.addEventListener("click", () => {
   if (gameRunning) return;
 
@@ -62,7 +79,6 @@ startBtn.addEventListener("click", () => {
       gameRunning = false;
       box.style.display = "none";
 
-      // High score update
       if (score > highScore) {
         highScore = score;
         localStorage.setItem("highScore", highScore);
