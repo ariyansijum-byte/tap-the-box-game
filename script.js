@@ -1,4 +1,4 @@
-alert("JS Loaded");
+// elements
 const box = document.getElementById("box");
 const gameArea = document.getElementById("gameArea");
 const startBtn = document.getElementById("startBtn");
@@ -7,57 +7,59 @@ const timeEl = document.getElementById("time");
 
 let score = 0;
 let timeLeft = 30;
-let gameInterval = null;
+let moveInterval = null;
 let timerInterval = null;
 
-// random position function
+// box random move
 function moveBox() {
-  const areaRect = gameArea.getBoundingClientRect();
+  const areaSize = 300;
   const boxSize = 80;
 
-  const maxX = areaRect.width - boxSize;
-  const maxY = areaRect.height - boxSize;
+  const maxX = areaSize - boxSize;
+  const maxY = areaSize - boxSize;
 
-  const randomX = Math.random() * maxX;
-  const randomY = Math.random() * maxY;
+  const x = Math.floor(Math.random() * maxX);
+  const y = Math.floor(Math.random() * maxY);
 
-  box.style.left = randomX + "px";
-  box.style.top = randomY + "px";
+  box.style.left = x + "px";
+  box.style.top = y + "px";
+  box.style.display = "block";
 }
+
+// box click
+box.addEventListener("click", () => {
+  score++;
+  scoreEl.innerText = score;
+  moveBox();
+});
 
 // start game
 startBtn.addEventListener("click", () => {
+  // reset
   score = 0;
   timeLeft = 30;
+  scoreEl.innerText = score;
+  timeEl.innerText = timeLeft;
 
-  scoreEl.textContent = score;
-  timeEl.textContent = timeLeft;
-
-  box.style.display = "block";
-  moveBox();
-
-  clearInterval(gameInterval);
+  clearInterval(moveInterval);
   clearInterval(timerInterval);
 
-  // 🔥 THIS LINE MAKES BOX MOVE
-  gameInterval = setInterval(moveBox, 800);
+  moveBox();
 
+  // MOVE EVERY 1 SECOND ✅
+  moveInterval = setInterval(moveBox, 1000);
+
+  // TIMER
   timerInterval = setInterval(() => {
     timeLeft--;
-    timeEl.textContent = timeLeft;
+    timeEl.innerText = timeLeft;
 
     if (timeLeft <= 0) {
-      clearInterval(gameInterval);
+      clearInterval(moveInterval);
       clearInterval(timerInterval);
+      box.style.display = "none";
       alert("Game Over! Score: " + score);
     }
   }, 1000);
-});
-
-// click box
-box.addEventListener("click", () => {
-  score++;
-  scoreEl.textContent = score;
-  moveBox();
 });
 
