@@ -1,57 +1,69 @@
-document.addEventListener("DOMContentLoaded", () => {
+// Elements
+const gameArea = document.getElementById("gameArea");
+const box = document.getElementById("box");
+const startBtn = document.getElementById("startBtn");
+const scoreEl = document.getElementById("score");
+const timeEl = document.getElementById("time");
 
-  const gameArea = document.getElementById("gameArea");
-  const box = document.getElementById("box");
-  const startBtn = document.getElementById("startBtn");
-  const scoreEl = document.getElementById("score");
-  const timeEl = document.getElementById("time");
+// Game state
+let score = 0;
+let timeLeft = 30;
+let gameRunning = false;
+let timer = null;
 
-  let score = 0;
-  let timeLeft = 30;
-  let gameRunning = false;
-  let timer = null;
+// Move box randomly
+function moveBox() {
+  if (!gameRunning) return;
 
-  function moveBox() {
-    if (!gameRunning) return;
+  const areaWidth = gameArea.clientWidth;
+  const areaHeight = gameArea.clientHeight;
 
-    const maxX = gameArea.clientWidth - box.offsetWidth;
-    const maxY = gameArea.clientHeight - box.offsetHeight;
+  const boxSize = 80;
 
-    box.style.left = Math.random() * maxX + "px";
-    box.style.top = Math.random() * maxY + "px";
-  }
+  const maxX = areaWidth - boxSize;
+  const maxY = areaHeight - boxSize;
 
-  box.addEventListener("click", () => {
-    if (!gameRunning) return;
-    score++;
-    scoreEl.textContent = score;
-    moveBox();
-  });
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
 
-  startBtn.addEventListener("click", () => {
-    score = 0;
-    timeLeft = 30;
-    gameRunning = true;
+  box.style.left = x + "px";
+  box.style.top = y + "px";
+  box.style.display = "block";
+}
 
-    scoreEl.textContent = score;
+// Box click
+box.addEventListener("click", () => {
+  if (!gameRunning) return;
+
+  score++;
+  scoreEl.textContent = score;
+  moveBox();
+});
+
+// Start game
+startBtn.addEventListener("click", () => {
+  if (gameRunning) return;
+
+  score = 0;
+  timeLeft = 30;
+  scoreEl.textContent = score;
+  timeEl.textContent = timeLeft;
+
+  gameRunning = true;
+  box.style.display = "block";
+
+  moveBox();
+
+  timer = setInterval(() => {
+    timeLeft--;
     timeEl.textContent = timeLeft;
 
-    box.style.display = "block";
-    moveBox();
-
-    clearInterval(timer);
-    timer = setInterval(() => {
-      timeLeft--;
-      timeEl.textContent = timeLeft;
-
-      if (timeLeft <= 0) {
-        clearInterval(timer);
-        gameRunning = false;
-        box.style.display = "none";
-        alert("Game Over! Score: " + score);
-      }
-    }, 1000);
-  });
-
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      gameRunning = false;
+      box.style.display = "none";
+      alert("Game Over! Score: " + score);
+    }
+  }, 1000);
 });
 
