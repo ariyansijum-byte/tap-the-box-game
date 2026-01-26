@@ -1,5 +1,5 @@
 // ===============================
-// Tap The Box Game - WORKING JS
+// Tap The Box Game - FINAL JS
 // ===============================
 
 // Elements
@@ -11,13 +11,13 @@ const scoreEl = document.getElementById("score");
 const timeEl = document.getElementById("time");
 const highScoreEl = document.getElementById("highScore");
 
-// Game State
+// Game state
 let score = 0;
 let timeLeft = 30;
 let gameRunning = false;
 let timer = null;
 
-// High Score
+// High score
 let highScore = Number(localStorage.getItem("highScore")) || 0;
 highScoreEl.textContent = highScore;
 
@@ -48,40 +48,46 @@ box.addEventListener("click", () => {
   score++;
   scoreEl.textContent = score;
 
-  if (score > highScore) {
-    highScore = score;
-    localStorage.setItem("highScore", highScore);
-    highScoreEl.textContent = highScore;
-  }
-
-  // 🔥 IMPORTANT: move again after click
   moveBox();
 });
 
-// Start Game
+// Start game
 startBtn.addEventListener("click", () => {
   if (gameRunning) return;
 
+  gameRunning = true;
   score = 0;
   timeLeft = 30;
-  gameRunning = true;
 
   scoreEl.textContent = score;
   timeEl.textContent = timeLeft;
 
   box.style.display = "block";
-  moveBox(); // first move
+  moveBox();
 
   timer = setInterval(() => {
     timeLeft--;
     timeEl.textContent = timeLeft;
 
     if (timeLeft <= 0) {
-      clearInterval(timer);
-      gameRunning = false;
-      box.style.display = "none";
-      alert("Game Over! Your Score: " + score);
+      endGame();
     }
   }, 1000);
 });
+
+// End game
+function endGame() {
+  gameRunning = false;
+  clearInterval(timer);
+
+  box.style.display = "none";
+
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem("highScore", highScore);
+    highScoreEl.textContent = highScore;
+  }
+
+  alert("Game Over! Your Score: " + score);
+}
 
