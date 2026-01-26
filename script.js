@@ -1,6 +1,8 @@
-// =======================
-// Elements
-// =======================
+// ===============================
+// Tap The Box Game – Final JS
+// ===============================
+
+// -------- Elements --------
 const gameArea = document.getElementById("gameArea");
 const box = document.getElementById("box");
 const startBtn = document.getElementById("startBtn");
@@ -9,23 +11,17 @@ const scoreEl = document.getElementById("score");
 const timeEl = document.getElementById("time");
 const highScoreEl = document.getElementById("highScore");
 
-// =======================
-// Game variables
-// =======================
+// -------- Game State --------
 let score = 0;
 let timeLeft = 30;
 let gameRunning = false;
 let timer = null;
 
-// =======================
-// High score (localStorage)
-// =======================
-let highScore = localStorage.getItem("highScore") || 0;
+// -------- High Score --------
+let highScore = Number(localStorage.getItem("highScore")) || 0;
 highScoreEl.textContent = highScore;
 
-// =======================
-// Move box randomly
-// =======================
+// -------- Move Box --------
 function moveBox() {
   if (!gameRunning) return;
 
@@ -35,16 +31,17 @@ function moveBox() {
   const boxWidth = box.offsetWidth;
   const boxHeight = box.offsetHeight;
 
-  const x = Math.random() * (areaWidth - boxWidth);
-  const y = Math.random() * (areaHeight - boxHeight);
+  const maxX = areaWidth - boxWidth;
+  const maxY = areaHeight - boxHeight;
 
-  box.style.left = x + "px";
-  box.style.top = y + "px";
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+
+  box.style.left = `${x}px`;
+  box.style.top = `${y}px`;
 }
 
-// =======================
-// Box click
-// =======================
+// -------- Box Click --------
 box.addEventListener("click", () => {
   if (!gameRunning) return;
 
@@ -54,12 +51,11 @@ box.addEventListener("click", () => {
   moveBox();
 });
 
-// =======================
-// Start button
-// =======================
+// -------- Start Game --------
 startBtn.addEventListener("click", () => {
   if (gameRunning) return;
 
+  // reset
   score = 0;
   timeLeft = 30;
   gameRunning = true;
@@ -75,15 +71,20 @@ startBtn.addEventListener("click", () => {
     timeEl.textContent = timeLeft;
 
     if (timeLeft <= 0) {
-      clearInterval(timer);
-      gameRunning = false;
-      box.style.display = "none";
-
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem("highScore", highScore);
-        highScoreEl.textContent = highScore;
-      }
+      endGame();
     }
   }, 1000);
 });
+
+// -------- End Game --------
+function endGame() {
+  clearInterval(timer);
+  gameRunning = false;
+  box.style.display = "none";
+
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem("highScore", highScore);
+    highScoreEl.textContent = highScore;
+  }
+}
