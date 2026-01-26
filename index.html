@@ -1,27 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tap The Box Game</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <h1>Tap The Box 🎯</h1>
 
+  <!-- Score Board -->
   <div class="info">
     Score: <span id="score">0</span> |
+    High Score: <span id="highScore">0</span> |
     Time: <span id="time">30</span>
   </div>
 
+  <br>
+
+  <!-- Start Button -->
   <button id="startBtn">Start Game</button>
 
+  <br><br>
+
+  <!-- Game Area -->
   <div id="gameArea">
     <div id="box"></div>
   </div>
 
-  <!-- JS always at bottom -->
-  <script src="script.js"></script>
+  <!-- JS (VERY IMPORTANT: defer) -->
+  <script src="script.js" defer></script>
+
 </body>
 </html>
