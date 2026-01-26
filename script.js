@@ -1,3 +1,4 @@
+alert("JS Loaded");
 const box = document.getElementById("box");
 const gameArea = document.getElementById("gameArea");
 const startBtn = document.getElementById("startBtn");
