@@ -1,74 +1,40 @@
-// ============================
-// Elements
-// ============================
 const gameArea = document.getElementById("gameArea");
 const box = document.getElementById("box");
 const startBtn = document.getElementById("startBtn");
-
 const scoreEl = document.getElementById("score");
 const timeEl = document.getElementById("time");
-const highScoreEl = document.getElementById("highScore");
 
-// ============================
-// Game State
-// ============================
 let score = 0;
 let timeLeft = 30;
 let gameRunning = false;
-let timer = null;
+let timer;
 
-// ============================
-// High Score
-// ============================
-let highScore = Number(localStorage.getItem("highScore")) || 0;
-highScoreEl.textContent = highScore;
-
-// ============================
-// Move Box Function
-// ============================
+// Move box randomly
 function moveBox() {
-  if (!gameRunning) return;
+  const maxX = gameArea.clientWidth - box.offsetWidth;
+  const maxY = gameArea.clientHeight - box.offsetHeight;
 
-  const areaWidth = gameArea.clientWidth;
-  const areaHeight = gameArea.clientHeight;
-
-  const boxWidth = box.offsetWidth;
-  const boxHeight = box.offsetHeight;
-
-  const x = Math.random() * (areaWidth - boxWidth);
-  const y = Math.random() * (areaHeight - boxHeight);
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
 
   box.style.left = x + "px";
   box.style.top = y + "px";
 }
 
-// ============================
-// Box Click
-// ============================
-box.addEventListener("click", () => {
+// Box click
+box.onclick = () => {
   if (!gameRunning) return;
 
   score++;
   scoreEl.textContent = score;
-
-  if (score > highScore) {
-    highScore = score;
-    localStorage.setItem("highScore", highScore);
-    highScoreEl.textContent = highScore;
-  }
-
   moveBox();
-});
+};
 
-// ============================
-// Start Button
-// ============================
-startBtn.addEventListener("click", () => {
-  if (gameRunning) return;
-
-  gameRunning = true;
+// Start game
+startBtn.onclick = () => {
   score = 0;
   timeLeft = 30;
+  gameRunning = true;
 
   scoreEl.textContent = score;
   timeEl.textContent = timeLeft;
@@ -76,6 +42,7 @@ startBtn.addEventListener("click", () => {
   box.style.display = "block";
   moveBox();
 
+  clearInterval(timer);
   timer = setInterval(() => {
     timeLeft--;
     timeEl.textContent = timeLeft;
@@ -84,6 +51,8 @@ startBtn.addEventListener("click", () => {
       clearInterval(timer);
       gameRunning = false;
       box.style.display = "none";
+      alert("Game Over! Score: " + score);
     }
   }, 1000);
-});
+};
+
