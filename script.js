@@ -1,65 +1,69 @@
-// elements
-const box = document.getElementById("box");
-const gameArea = document.getElementById("gameArea");
-const startBtn = document.getElementById("startBtn");
-const scoreEl = document.getElementById("score");
-const timeEl = document.getElementById("time");
-
+// ===== GAME VARIABLES =====
+let level = 1;
 let score = 0;
-let timeLeft = 30;
-let moveInterval = null;
-let timerInterval = null;
+let timeLeft = 20;
+let timer;
+let boxCount = 1;
 
-// box random move
-function moveBox() {
-  const areaSize = 300;
-  const boxSize = 80;
+// ===== ELEMENTS =====
+const gameArea = document.getElementById("game");
+const levelText = document.getElementById("level");
+const scoreText = document.getElementById("score");
+const timeText = document.getElementById("time");
 
-  const maxX = areaSize - boxSize;
-  const maxY = areaSize - boxSize;
+// ===== START GAME =====
+startLevel();
 
-  const x = Math.floor(Math.random() * maxX);
-  const y = Math.floor(Math.random() * maxY);
+// ===== FUNCTIONS =====
+function startLevel() {
+  clearInterval(timer);
+  gameArea.innerHTML = "";
 
-  box.style.left = x + "px";
-  box.style.top = y + "px";
-  box.style.display = "block";
+  timeLeft = 20;
+  levelText.innerText = level;
+  scoreText.innerText = score;
+  timeText.innerText = timeLeft;
+
+  boxCount = level;
+  createBoxes(boxCount);
+  startTimer();
 }
 
-// box click
-box.addEventListener("click", () => {
-  score++;
-  scoreEl.innerText = score;
-  moveBox();
-});
-
-// start game
-startBtn.addEventListener("click", () => {
-  // reset
-  score = 0;
-  timeLeft = 30;
-  scoreEl.innerText = score;
-  timeEl.innerText = timeLeft;
-
-  clearInterval(moveInterval);
-  clearInterval(timerInterval);
-
-  moveBox();
-
-  // MOVE EVERY 1 SECOND ✅
-  moveInterval = setInterval(moveBox, 1000);
-
-  // TIMER
-  timerInterval = setInterval(() => {
+// ===== TIMER =====
+function startTimer() {
+  timer = setInterval(() => {
     timeLeft--;
-    timeEl.innerText = timeLeft;
+    timeText.innerText = timeLeft;
 
     if (timeLeft <= 0) {
-      clearInterval(moveInterval);
-      clearInterval(timerInterval);
-      box.style.display = "none";
-      alert("Game Over! Score: " + score);
+      clearInterval(timer);
+      nextLevel();
     }
   }, 1000);
-});
+}
+
+// ===== NEXT LEVEL =====
+function nextLevel() {
+  level++;
+  startLevel();
+}
+
+// ===== CREATE BOXES =====
+function createBoxes(count) {
+  for (let i = 0; i < count; i++) {
+    const box = document.createElement("div");
+    box.className = "box";
+
+    box.style.left = Math.random() * 80 + "%";
+    box.style.top = Math.random() * 80 + "%";
+
+    box.onclick = () => {
+      score++;
+      scoreText.innerText = score;
+      box.remove();
+    };
+
+    gameArea.appendChild(box);
+  }
+}
 
