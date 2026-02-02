@@ -1,53 +1,93 @@
-/* Reset */
+/* ===== RESET ===== */
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-/* Body */
+/* ===== BODY ===== */
 body {
-  margin: 0;
-  padding: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: radial-gradient(circle at top, #111 0%, #000 70%);
+  color: #ffffff;
   text-align: center;
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
+  overflow: hidden;
+  height: 100vh;
 }
 
-/* Title */
+/* ===== TITLE ===== */
 h1 {
-  margin-top: 20px;
+  margin: 15px 0;
+  font-size: 2rem;
+  color: #00ff99;
+  text-shadow: 0 0 10px #00ff99, 0 0 20px #00ff99;
 }
 
-/* Score info */
+/* ===== INFO BAR ===== */
 .info {
-  font-size: 18px;
-  margin: 10px 0;
-}
-
-/* Start button */
-#startBtn {
-  padding: 10px 20px;
   font-size: 16px;
-  cursor: pointer;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
+  color: #fff;
+  text-shadow: 0 0 5px #00ff99;
 }
 
-/* Game Area */
-#gameArea {
-  width: 300px;
-  height: 300px;
-  border: 3px solid black;
+/* ===== GAME AREA ===== */
+#game {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  background: linear-gradient(135deg, #222 0%, #111 100%);
+  overflow: hidden;
+  border: 2px solid #00ff99;
+  border-radius: 10px;
+  box-shadow: 0 0 20px #00ff99;
   margin: 0 auto;
-  position: relative;   /* VERY IMPORTANT */
-  background: white;
 }
 
-/* Box */
-#box {
-  width: 80px;
-  height: 80px;
-  background: red;
-  position: absolute;   /* VERY IMPORTANT */
-  display: none;
+/* ===== BOX ===== */
+.box {
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  background: #00ff99;
+  border-radius: 12px;
   cursor: pointer;
-  border-radius: 8px;
+  box-shadow: 0 0 10px #00ff99, 0 0 20px #00ff99;
+  transition: left 0.4s linear, top 0.4s linear, transform 0.1s;
+}
+
+/* ===== BOX ACTIVE CLICK ===== */
+.box:active {
+  transform: scale(0.9);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .info {
+    font-size: 14px;
+  }
+
+  .box {
+    width: 45px;
+    height: 45px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .info {
+    font-size: 13px;
+  }
+
+  .box {
+    width: 40px;
+    height: 40px;
+  }
 }
