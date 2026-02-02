@@ -1,126 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Tap The Box Game</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Tap The Box</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      text-align: center;
-    }
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f0f0f;
+    color: #fff;
+    text-align: center;
+  }
 
-    h1 {
-      margin: 10px 0;
-    }
+  h1 { margin: 10px 0; }
 
-    .info {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
+  .info {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
 
-    #game {
-      position: relative;
-      width: 100%;
-      height: 80vh;
-      background: #222;
-      overflow: hidden;
-    }
+  #game {
+    position: relative;
+    width: 100%;
+    height: 80vh;
+    background: #1e1e1e;
+    overflow: hidden;
+  }
 
-    .box {
-      position: absolute;
-      width: 60px;
-      height: 60px;
-      background: #00ff88;
-      border-radius: 10px;
-      cursor: pointer;
-      box-shadow: 0 0 15px #00ff88;
-      transition: transform 0.1s;
-    }
-
-    .box:active {
-      transform: scale(0.9);
-    }
-  </style>
+  .box {
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    background: #00ff99;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #00ff99;
+    cursor: pointer;
+  }
+</style>
 </head>
 
 <body>
 
-  <h1>Tap The Box</h1>
+<h1>Tap The Box</h1>
 
-  <div class="info">
-    Level: <span id="level">1</span> |
-    Score: <span id="score">0</span> |
-    Time: <span id="time">20</span>s
-  </div>
+<div class="info">
+  Level: <span id="level">1</span> |
+  Score: <span id="score">0</span> |
+  High Score: <span id="high">0</span> |
+  Time: <span id="time">20</span>s
+</div>
 
-  <div id="game"></div>
+<div id="game"></div>
 
-  <script>
-    // ===== GAME VARIABLES =====
-    let level = 1;
-    let score = 0;
-    let timeLeft = 20;
-    let timer;
+<script>
+/* ===== VARIABLES ===== */
+let level = 1;
+let score = 0;
+let timeLeft = 20;
+let timer;
+let moveTimer;
 
-    const gameArea = document.getElementById("game");
-    const levelText = document.getElementById("level");
-    const scoreText = document.getElementById("score");
-    const timeText = document.getElementById("time");
+let highScore = localStorage.getItem("highScore") || 0;
 
-    // ===== START GAME =====
-    startLevel();
+/* ===== ELEMENTS ===== */
+const game = document.getElementById("game");
+const levelText = document.getElementById("level");
+const scoreText = document.getElementById("score");
+const timeText = document.getElementById("time");
+const highText = document.getElementById("high");
 
-    function startLevel() {
+highText.innerText = highScore;
+
+/* ===== START ===== */
+startLevel();
+
+/* ===== FUNCTIONS ===== */
+function startLevel() {
+  clearInterval(timer);
+  clearInterval(moveTimer);
+
+  game.innerHTML = "";
+  timeLeft = 20;
+
+  levelText.innerText = level;
+  scoreText.innerText = score;
+  timeText.innerText = timeLeft;
+
+  createBoxes(level + 1);
+  startTimer();
+  startMove();
+}
+
+/* ===== TIMER ===== */
+function startTimer() {
+  timer = setInterval(() => {
+    timeLeft--;
+    timeText.innerText = timeLeft;
+
+    if (timeLeft <= 0) {
       clearInterval(timer);
-      gameArea.innerHTML = "";
+      level++;
+      startLevel();
+    }
+  }, 1000);
+}
 
-      timeLeft = 20;
-      timeText.innerText = timeLeft;
-      levelText.innerText = level;
+/* ===== CREATE BOXES ===== */
+function createBoxes(count) {
+  for (let i = 0; i < count; i++) {
+    const box = document.createElement("div");
+    box.className = "box";
+
+    randomPosition(box);
+
+    box.onclick = () => {
+      score++;
       scoreText.innerText = score;
 
-      createBoxes(level);
-      startTimer();
-    }
-
-    // ===== TIMER =====
-    function startTimer() {
-      timer = setInterval(() => {
-        timeLeft--;
-        timeText.innerText = timeLeft;
-
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          level++;
-          startLevel();
-        }
-      }, 1000);
-    }
-
-    // ===== CREATE BOXES =====
-    function createBoxes(count) {
-      for (let i = 0; i < count; i++) {
-        const box = document.createElement("div");
-        box.className = "box";
-
-        box.style.left = Math.random() * 85 + "%";
-        box.style.top = Math.random() * 75 + "%";
-
-        box.onclick = () => {
-          score++;
-          scoreText.innerText = score;
-          box.remove();
-        };
-
-        gameArea.appendChild(box);
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("highScore", highScore);
+        highText.innerText = highScore;
       }
-    }
-  </script>
+
+      randomPosition(box);
+    };
+
+    game.appendChild(box);
+  }
+}
+
+/* ===== MOVE BOXES ===== */
+function startMove() {
+  moveTimer = setInterval(() => {
+    const boxes = document.querySelectorAll(".box");
+    boxes.forEach(box => {
+      randomPosition(box);
+    });
+  }, 800); // box move speed
+}
+
+/* ===== RANDOM POSITION ===== */
+function randomPosition(box) {
+  const maxX = game.clientWidth - 60;
+  const maxY = game.clientHeight - 60;
+
+  box.style.left = Math.random() * maxX + "px";
+  box.style.top = Math.random() * maxY + "px";
+}
+</script>
 
 </body>
 </html>
+
