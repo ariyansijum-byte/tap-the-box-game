@@ -3,30 +3,37 @@ let level = 1;
 let score = 0;
 let timeLeft = 20;
 let timer;
-let boxCount = 1;
+let moveTimer;
 
 // ===== ELEMENTS =====
 const gameArea = document.getElementById("game");
 const levelText = document.getElementById("level");
 const scoreText = document.getElementById("score");
 const timeText = document.getElementById("time");
+const highText = document.getElementById("high");
+
+// ===== HIGH SCORE =====
+let highScore = localStorage.getItem("highScore") || 0;
+highText.innerText = highScore;
 
 // ===== START GAME =====
 startLevel();
 
-// ===== FUNCTIONS =====
+// ===== START LEVEL =====
 function startLevel() {
   clearInterval(timer);
-  gameArea.innerHTML = "";
+  clearInterval(moveTimer);
 
+  gameArea.innerHTML = "";
   timeLeft = 20;
+
   levelText.innerText = level;
   scoreText.innerText = score;
   timeText.innerText = timeLeft;
 
-  boxCount = level;
-  createBoxes(boxCount);
+  createBoxes(level + 1);
   startTimer();
+  startMove();
 }
 
 // ===== TIMER =====
@@ -37,15 +44,10 @@ function startTimer() {
 
     if (timeLeft <= 0) {
       clearInterval(timer);
-      nextLevel();
+      level++;
+      startLevel();
     }
   }, 1000);
-}
-
-// ===== NEXT LEVEL =====
-function nextLevel() {
-  level++;
-  startLevel();
 }
 
 // ===== CREATE BOXES =====
@@ -54,16 +56,46 @@ function createBoxes(count) {
     const box = document.createElement("div");
     box.className = "box";
 
-    box.style.left = Math.random() * 80 + "%";
-    box.style.top = Math.random() * 80 + "%";
+    randomPosition(box);
 
     box.onclick = () => {
       score++;
       scoreText.innerText = score;
-      box.remove();
+
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("highScore", highScore);
+        highText.innerText = highScore;
+      }
+
+      randomPosition(box);
     };
 
     gameArea.appendChild(box);
   }
+}
+
+// ===== MOVE BOXES =====
+function startMove() {
+  moveTimer = setInterval(() => {
+    const boxes = document.querySelectorAll(".box");
+    boxes.forEach(box => {
+      randomPosition(box);
+    });
+  }, 800); // speed (lower = faster)
+}
+
+// ===== RANDOM POSITION =====
+function randomPosition(box) {
+  const boxSize = 55;
+
+  const maxX = gameArea.clientWidth - boxSize;
+  const maxY = gameArea.clientHeight - boxSize;
+
+  const x = Math.floor(Math.random() * maxX);
+  const y = Math.floor(Math.random() * maxY);
+
+  box.style.left = x + "px";
+  box.style.top = y + "px";
 }
 
