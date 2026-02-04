@@ -8,20 +8,6 @@ const scoreEl = document.getElementById('score');
 const highScoreEl = document.getElementById('highScore');
 const levelEl = document.getElementById('level');
 const timeEl = document.getElementById('time');
-const gameArea = document.querySelector('.game-area');
-
-// Box movement function
-function moveBox() {
-    const areaWidth = gameArea.clientWidth - box.clientWidth;
-    const areaHeight = gameArea.clientHeight - box.clientHeight;
-
-    // Random position
-    const newX = Math.floor(Math.random() * areaWidth);
-    const newY = Math.floor(Math.random() * areaHeight);
-
-    box.style.left = newX + 'px';
-    box.style.top = newY + 'px';
-}
 
 // High score update
 function updateHighScore() {
@@ -42,13 +28,12 @@ function updateLevel() {
     timeEl.textContent = time;
 }
 
-// Box click event
+// Box click event (score বাড়বে, কিন্তু move হবে না)
 box.addEventListener('click', () => {
     score++;
     scoreEl.textContent = score;
     updateHighScore();
     updateLevel();
-    moveBox();
 });
 
 // Timer countdown
@@ -65,8 +50,6 @@ setInterval(() => {
         scoreEl.textContent = score;
         timeEl.textContent = time;
         levelEl.textContent = level;
-        box.style.left = '0px';
-        box.style.top = '0px';
     }
 }, 1000);
   
