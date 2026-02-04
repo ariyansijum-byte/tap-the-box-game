@@ -37,7 +37,21 @@ function startLevel() {
   startTimer();
   startMove();
 }
+// ===== MOVE BOX =====
+function startMove() {
+  moveTimer = setInterval(() => {
+    const box = document.querySelector(".box");
+    if (!box) return;
 
+    // force repaint for mobile
+    box.style.left = box.offsetLeft + "px";
+    box.style.top = box.offsetTop + "px";
+
+    requestAnimationFrame(() => {
+      randomPosition(box);
+    });
+  }, 700);
+}
 // ===== TIMER =====
 function startTimer() {
   timer = setInterval(() => {
