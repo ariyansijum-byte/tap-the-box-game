@@ -2,42 +2,66 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Tap The Box</title>
+<title>Tap The Box Game</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0f0f0f;
-    color: #fff;
-    text-align: center;
-  }
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  h1 { margin: 10px 0; }
+/* ===== BODY ===== */
+body {
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at top, #111, #000);
+  color: #fff;
+  text-align: center;
+  height: 100vh;
+  overflow: hidden;
+}
 
-  .info {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
+/* ===== TITLE ===== */
+h1 {
+  margin: 12px 0;
+  color: #00ff99;
+  text-shadow: 0 0 10px #00ff99;
+}
 
-  #game {
-    position: relative;
-    width: 100%;
-    height: 80vh;
-    background: #1e1e1e;
-    overflow: hidden;
-  }
+/* ===== INFO BAR ===== */
+.info {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
 
-  .box {
-    position: absolute;
-    width: 55px;
-    height: 55px;
-    background: #00ff99;
-    border-radius: 10px;
-    box-shadow: 0 0 15px #00ff99;
-    cursor: pointer;
-  }
+/* ===== GAME AREA ===== */
+#game {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  background: #1b1b1b;
+  border: 2px solid #00ff99;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ===== BOX ===== */
+.box {
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  background: #00ff99;
+  border-radius: 12px;
+  box-shadow: 0 0 15px #00ff99;
+  cursor: pointer;
+  transition: left 0.4s linear, top 0.4s linear, transform 0.1s;
+}
+
+.box:active {
+  transform: scale(0.9);
+}
 </style>
 </head>
 
@@ -49,7 +73,7 @@
   Level: <span id="level">1</span> |
   Score: <span id="score">0</span> |
   High Score: <span id="high">0</span> |
-  Time: <span id="time">20</span>s
+  Time: <span id="time">30</span>s
 </div>
 
 <div id="game"></div>
@@ -58,11 +82,9 @@
 /* ===== VARIABLES ===== */
 let level = 1;
 let score = 0;
-let timeLeft = 20;
+let timeLeft = 30;
 let timer;
 let moveTimer;
-
-let highScore = localStorage.getItem("highScore") || 0;
 
 /* ===== ELEMENTS ===== */
 const game = document.getElementById("game");
@@ -71,24 +93,26 @@ const scoreText = document.getElementById("score");
 const timeText = document.getElementById("time");
 const highText = document.getElementById("high");
 
+/* ===== HIGH SCORE ===== */
+let highScore = localStorage.getItem("highScore") || 0;
 highText.innerText = highScore;
 
-/* ===== START ===== */
+/* ===== START GAME ===== */
 startLevel();
 
-/* ===== FUNCTIONS ===== */
+/* ===== START LEVEL ===== */
 function startLevel() {
   clearInterval(timer);
   clearInterval(moveTimer);
-
   game.innerHTML = "";
-  timeLeft = 20;
+
+  timeLeft = level === 1 ? 30 : 20;
 
   levelText.innerText = level;
   scoreText.innerText = score;
   timeText.innerText = timeLeft;
 
-  createBoxes(level + 1);
+  createBox();
   startTimer();
   startMove();
 }
@@ -107,45 +131,42 @@ function startTimer() {
   }, 1000);
 }
 
-/* ===== CREATE BOXES ===== */
-function createBoxes(count) {
-  for (let i = 0; i < count; i++) {
-    const box = document.createElement("div");
-    box.className = "box";
+/* ===== CREATE ONE BOX ===== */
+function createBox() {
+  const box = document.createElement("div");
+  box.className = "box";
+
+  randomPosition(box);
+
+  box.onclick = () => {
+    score++;
+    scoreText.innerText = score;
+
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem("highScore", highScore);
+      highText.innerText = highScore;
+    }
 
     randomPosition(box);
+  };
 
-    box.onclick = () => {
-      score++;
-      scoreText.innerText = score;
-
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem("highScore", highScore);
-        highText.innerText = highScore;
-      }
-
-      randomPosition(box);
-    };
-
-    game.appendChild(box);
-  }
+  game.appendChild(box);
 }
 
-/* ===== MOVE BOXES ===== */
+/* ===== MOVE BOX ===== */
 function startMove() {
   moveTimer = setInterval(() => {
-    const boxes = document.querySelectorAll(".box");
-    boxes.forEach(box => {
-      randomPosition(box);
-    });
-  }, 800); // box move speed
+    const box = document.querySelector(".box");
+    if (box) randomPosition(box);
+  }, 700);
 }
 
 /* ===== RANDOM POSITION ===== */
 function randomPosition(box) {
-  const maxX = game.clientWidth - 60;
-  const maxY = game.clientHeight - 60;
+  const size = 55;
+  const maxX = game.clientWidth - size;
+  const maxY = game.clientHeight - size;
 
   box.style.left = Math.random() * maxX + "px";
   box.style.top = Math.random() * maxY + "px";
@@ -154,4 +175,3 @@ function randomPosition(box) {
 
 </body>
 </html>
-
