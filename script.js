@@ -1,112 +1,73 @@
-// ===== VARIABLES =====
-let level = 1;
 let score = 0;
-let timeLeft = 30;
-let timer;
-let moveTimer;
+let highScore = 0;
+let level = 1;
+let time = 30;
 
-// ===== ELEMENTS =====
-const game = document.getElementById("game");
-const levelText = document.getElementById("level");
-const scoreText = document.getElementById("score");
-const timeText = document.getElementById("time");
-const highText = document.getElementById("high");
+const box = document.getElementById('box');
+const scoreEl = document.getElementById('score');
+const highScoreEl = document.getElementById('highScore');
+const levelEl = document.getElementById('level');
+const timeEl = document.getElementById('time');
+const gameArea = document.querySelector('.game-area');
 
-// ===== HIGH SCORE =====
-let highScore = localStorage.getItem("highScore") || 0;
-highText.innerText = highScore;
+// Box movement function
+function moveBox() {
+    const areaWidth = gameArea.clientWidth - box.clientWidth;
+    const areaHeight = gameArea.clientHeight - box.clientHeight;
 
-// ===== START GAME =====
-startLevel();
+    // Random position
+    const newX = Math.floor(Math.random() * areaWidth);
+    const newY = Math.floor(Math.random() * areaHeight);
 
-// ===== START LEVEL =====
-function startLevel() {
-  clearInterval(timer);
-  clearInterval(moveTimer);
-
-  game.innerHTML = "";
-
-  // level 1 = 30 sec, next levels = 20 sec
-  timeLeft = level === 1 ? 30 : 20;
-
-  levelText.innerText = level;
-  scoreText.innerText = score;
-  timeText.innerText = timeLeft;
-
-  createBox(); // only 1 box
-  startTimer();
-  startMove();
+    box.style.left = newX + 'px';
+    box.style.top = newY + 'px';
 }
-// ===== MOVE BOX =====
-function startMove() {
-  moveTimer = setInterval(() => {
-    const box = document.querySelector(".box");
-    if (!box) return;
-console.log("moving...");
-    // force repaint for mobile
-    box.style.left = box.offsetLeft + "px";
-    box.style.top = box.offsetTop + "px";
 
-    requestAnimationFrame(() => {
-      randomPosition(box);
-    });
-  }, 700);
+// High score update
+function updateHighScore() {
+    if(score > highScore) highScore = score;
+    highScoreEl.textContent = highScore;
 }
-// ===== TIMER =====
-function startTimer() {
-  timer = setInterval(() => {
-    timeLeft--;
-    timeText.innerText = timeLeft;
 
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      level++;
-      startLevel();
+// Level & time update
+function updateLevel() {
+    if(score >= 10 && level === 1) {
+        level = 2;
+        time = 20;
+    } else if(score >= 20 && level === 2) {
+        level = 3;
+        time = 10;
     }
-  }, 1000);
+    levelEl.textContent = level;
+    timeEl.textContent = time;
 }
 
-// ===== CREATE ONE BOX =====
-function createBox() {
-  const box = document.createElement("div");
-  box.className = "box";
-
-  randomPosition(box);
-
-  box.onclick = () => {
+// Box click event
+box.addEventListener('click', () => {
     score++;
-    scoreText.innerText = score;
+    scoreEl.textContent = score;
+    updateHighScore();
+    updateLevel();
+    moveBox();
+});
 
-    if (score > highScore) {
-      highScore = score;
-      localStorage.setItem("highScore", highScore);
-      highText.innerText = highScore;
+// Timer countdown
+setInterval(() => {
+    if(time > 0) {
+        time--;
+        timeEl.textContent = time;
+    } else {
+        alert(`Game Over! Your score: ${score}`);
+        // Reset everything
+        score = 0;
+        time = 30;
+        level = 1;
+        scoreEl.textContent = score;
+        timeEl.textContent = time;
+        levelEl.textContent = level;
+        box.style.left = '0px';
+        box.style.top = '0px';
     }
-
-    randomPosition(box);
-  };
-
-  game.appendChild(box);
-}
-
-// ===== MOVE BOX =====
-function startMove() {
-  moveTimer = setInterval(() => {
-    const box = document.querySelector(".box");
-    if (box) randomPosition(box);
-  }, 700); // move speed
-}
-
-// ===== RANDOM POSITION =====
-function randomPosition(box) {
-  const size = 55;
-  const maxX = game.clientWidth - size;
-  const maxY = game.clientHeight - size;
-
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
-
-  box.style.left = x + "px";
-  box.style.top = y + "px";
-}
+}, 1000);
+  
 
