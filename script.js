@@ -8,6 +8,11 @@ const scoreEl = document.getElementById('score');
 const highScoreEl = document.getElementById('highScore');
 const levelEl = document.getElementById('level');
 const timeEl = document.getElementById('time');
+const gameArea = document.querySelector('.game-area');
+
+// Box original center position
+const centerX = (gameArea.clientWidth - box.clientWidth) / 2;
+const centerY = (gameArea.clientHeight - box.clientHeight) / 2;
 
 // High score update
 function updateHighScore() {
@@ -28,7 +33,7 @@ function updateLevel() {
     timeEl.textContent = time;
 }
 
-// Box click event (score বাড়বে, কিন্তু move হবে না)
+// Box click event (score বাড়বে)
 box.addEventListener('click', () => {
     score++;
     scoreEl.textContent = score;
@@ -36,11 +41,23 @@ box.addEventListener('click', () => {
     updateLevel();
 });
 
+// Small random movement function
+function slightMove() {
+    // Box will move max ±20px around center
+    const maxShift = 20;
+    const randomX = centerX + Math.floor(Math.random() * maxShift*2) - maxShift;
+    const randomY = centerY + Math.floor(Math.random() * maxShift*2) - maxShift;
+
+    box.style.left = randomX + 'px';
+    box.style.top = randomY + 'px';
+}
+
 // Timer countdown
 setInterval(() => {
     if(time > 0) {
         time--;
         timeEl.textContent = time;
+        slightMove(); // Box moves slightly every second
     } else {
         alert(`Game Over! Your score: ${score}`);
         // Reset everything
@@ -50,7 +67,13 @@ setInterval(() => {
         scoreEl.textContent = score;
         timeEl.textContent = time;
         levelEl.textContent = level;
+        box.style.left = centerX + 'px';
+        box.style.top = centerY + 'px';
     }
 }, 1000);
+
+// Set initial center
+box.style.left = centerX + 'px';
+box.style.top = centerY + 'px';
   
 
