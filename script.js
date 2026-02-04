@@ -1,12 +1,12 @@
-// ===== GAME VARIABLES =====
+// ===== VARIABLES =====
 let level = 1;
 let score = 0;
-let timeLeft = 20;
+let timeLeft = 30;
 let timer;
 let moveTimer;
 
 // ===== ELEMENTS =====
-const gameArea = document.getElementById("game");
+const game = document.getElementById("game");
 const levelText = document.getElementById("level");
 const scoreText = document.getElementById("score");
 const timeText = document.getElementById("time");
@@ -24,14 +24,16 @@ function startLevel() {
   clearInterval(timer);
   clearInterval(moveTimer);
 
-  gameArea.innerHTML = "";
-  timeLeft = 20;
+  game.innerHTML = "";
+
+  // level 1 = 30 sec, next levels = 20 sec
+  timeLeft = level === 1 ? 30 : 20;
 
   levelText.innerText = level;
   scoreText.innerText = score;
   timeText.innerText = timeLeft;
 
-  createBoxes(level + 1);
+  createBox(); // only 1 box
   startTimer();
   startMove();
 }
@@ -50,50 +52,45 @@ function startTimer() {
   }, 1000);
 }
 
-// ===== CREATE BOXES =====
-function createBoxes(count) {
-  for (let i = 0; i < count; i++) {
-    const box = document.createElement("div");
-    box.className = "box";
+// ===== CREATE ONE BOX =====
+function createBox() {
+  const box = document.createElement("div");
+  box.className = "box";
+
+  randomPosition(box);
+
+  box.onclick = () => {
+    score++;
+    scoreText.innerText = score;
+
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem("highScore", highScore);
+      highText.innerText = highScore;
+    }
 
     randomPosition(box);
+  };
 
-    box.onclick = () => {
-      score++;
-      scoreText.innerText = score;
-
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem("highScore", highScore);
-        highText.innerText = highScore;
-      }
-
-      randomPosition(box);
-    };
-
-    gameArea.appendChild(box);
-  }
+  game.appendChild(box);
 }
 
-// ===== MOVE BOXES =====
+// ===== MOVE BOX =====
 function startMove() {
   moveTimer = setInterval(() => {
-    const boxes = document.querySelectorAll(".box");
-    boxes.forEach(box => {
-      randomPosition(box);
-    });
-  }, 800); // speed (lower = faster)
+    const box = document.querySelector(".box");
+    if (box) randomPosition(box);
+  }, 700); // move speed
 }
 
 // ===== RANDOM POSITION =====
 function randomPosition(box) {
-  const boxSize = 55;
+  const size = 55;
+  const maxX = game.clientWidth - size;
+  const maxY = game.clientHeight - size;
 
-  const maxX = gameArea.clientWidth - boxSize;
-  const maxY = gameArea.clientHeight - boxSize;
-
-  const x = Math.floor(Math.random() * maxX);
-  const y = Math.floor(Math.random() * maxY);
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
 
   box.style.left = x + "px";
   box.style.top = y + "px";
