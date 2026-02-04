@@ -42,7 +42,7 @@ function startMove() {
   moveTimer = setInterval(() => {
     const box = document.querySelector(".box");
     if (!box) return;
-
+console.log("moving...");
     // force repaint for mobile
     box.style.left = box.offsetLeft + "px";
     box.style.top = box.offsetTop + "px";
